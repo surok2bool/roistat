@@ -172,7 +172,7 @@ class RecordParser implements ParserRecordInterface
     protected function findByRegExp($pattern, $element): string
     {
         $result = preg_match($pattern, $this->record, $matches);
-        if ($result !== 1) {
+        if (!$result) {
             throw new LogParsingErrorException("Элемент {$element} не найден в записи");
         }
         return $matches[0];
