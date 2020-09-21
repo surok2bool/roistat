@@ -107,7 +107,8 @@ class RecordParser implements ParserRecordInterface
      */
     protected function urlIsUnique(): bool
     {
-        $result = $this->findByRegExp('#\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))#iS', 'url');
+        $result = trim($this->findByRegExp('/ \/([^\s]){1,} /', 'url'));
+        
         if (!in_array($result, $this->urls, true)) {
             $this->urls[] = $result;
             return true;
