@@ -64,7 +64,16 @@ class RecordParser implements ParserRecordInterface
             $this->result['urls']++;
         }
 
-        $this->result['traffic'] += $this->getTraffic();
+        $statusCode = $this->getStatusCode();
+        if (!is_null($statusCode)) {
+            if (array_key_exists($statusCode, $this->result['statusCodes'])) {
+                $this->result['statusCodes'][$statusCode]++;
+            } else {
+                $this->result['statusCodes'][$statusCode] = 1;
+            }
+        }
+
+        $this->result['traffic'] += $this->statusIsRedirect($statusCode) ? 0 : $this->getTraffic();
 
         $crawler = $this->getCrawler();
         if (!is_null($crawler)) {
@@ -75,14 +84,6 @@ class RecordParser implements ParserRecordInterface
             }
         }
 
-        $statusCode = $this->getStatusCode();
-        if (!is_null($statusCode)) {
-            if (array_key_exists($statusCode, $this->result['statusCodes'])) {
-                $this->result['statusCodes'][$statusCode]++;
-            } else {
-                $this->result['statusCodes'][$statusCode] = 1;
-            }
-        }
     }
 
     /**
@@ -178,5 +179,14 @@ class RecordParser implements ParserRecordInterface
         return $matches[0];
     }
 
+    /**
+     * @param int $statusCode
+     * @return bool
+     */
+    protected function statusIsRedirect(int $statusCode): bool
+    {
+        $code = (string) $statusCode;
+        return (int) $code[0] === 3;
+    }
 
 }
